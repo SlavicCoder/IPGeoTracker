@@ -3,13 +3,15 @@
 #include <QEventLoop>
 #include <QTextStream>
 #include <QNetworkReply>
+#include <QJsonDocument>
+#include <QJsonObject>
 
-IPStackAPI::IPStackAPI(const QString& apiKey, QObject* parent) : QObject(parent), m_apiKey(apiKey) {
+IPStackAPI::IPStackAPI( QObject* parent) : QObject(parent) {
     connect(&m_manager, &QNetworkAccessManager::finished, this, &IPStackAPI::onRequestFinished);
 }
 
-void IPStackAPI::processRequest(const QString& ipAddress) {
-    QString apiUrl = "http://api.ipstack.com/" + ipAddress + "?access_key=" + m_apiKey;
+void IPStackAPI::processRequest(const QString& apiKey, const QString& ipAddress) {
+    QString apiUrl = "http://api.ipstack.com/" + ipAddress + "?access_key=" + apiKey;
 
     QUrl url(apiUrl);
     QNetworkRequest request(url);
@@ -22,11 +24,23 @@ void IPStackAPI::processRequest(const QString& ipAddress) {
 
     if (reply->error() == QNetworkReply::NoError) {
         QByteArray responseData = reply->readAll();
-        QString responseString = QString::fromUtf8(responseData);
 
-        emit responseReceived(responseString);
+        // Parse the JSON data directly into a QJsonObject
+        QJsonParseError jsonError;
+        QJsonDocument jsonDoc = QJsonDocument::fromJson(responseData, &jsonError);
+
+        if (jsonError.error == QJsonParseError::NoError) {
+            QJsonObject jsonObject = jsonDoc.object();
+            emit responseReceived(jsonObject);
+        } else {
+            QJsonObject errorObject;
+            errorObject["error"] = "JSON parse error: " + jsonError.errorString();
+            emit responseReceived(errorObject);
+        }
     } else {
-        emit responseReceived(reply->errorString());
+        QJsonObject errorObject;
+        errorObject["error"] = reply->errorString();
+        emit responseReceived(errorObject);
     }
 }
 

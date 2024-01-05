@@ -1,26 +1,32 @@
-#ifndef DBMANAGER_H
-#define DBMANAGER_H
+#ifndef DBManager_H
+#define DBManager_H
 
 #include <QSqlDatabase>
 #include <QSqlQuery>
+#include <QSqlResult>
 
-class DbManager
+class DBManager
 {
 public:
-    DbManager();
-    ~DbManager();
+    DBManager();
+    ~DBManager();
 
-    //Rule of 5
-    DbManager(const DbManager&) = delete;
-    DbManager& operator=(const DbManager&) = delete;
-    DbManager(DbManager&&) = delete;
-    DbManager& operator=(DbManager&&) = delete;
+    DBManager(const DBManager&) = delete;
+    DBManager& operator=(const DBManager&) = delete;
+    DBManager(DBManager&&) = delete;
+    DBManager& operator=(DBManager&&) = delete;
 
     [[nodiscard]] bool connectionSuccessful() const;
     [[nodiscard]] bool executeQuery(const QString& query);
+    [[nodiscard]] QString getLastError() const;
+    [[nodiscard]] const QSqlQuery& getLastQuery() const;
+    void moveQueryToNextRow();
 
 private:
     QSqlDatabase m_db;
+    QSqlQuery m_query;
+
+    [[nodiscard]] bool setUpTable();
 };
 
-#endif // DBMANAGER_H
+#endif // DBManager_H

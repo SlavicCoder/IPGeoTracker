@@ -16,9 +16,12 @@ qt_add_qml_module(appIPGeoTracker
     URI IPGeoTracker
     VERSION 1.0
     QML_FILES Main.qml
-    QML_FILES PreviewPopup.qml
+    QML_FILES
     SOURCES dbmanager.h dbmanager.cpp
     SOURCES ipstackapi.h ipstackapi.cpp
+    SOURCES geolocationdatamanager.h geolocationdatamanager.cpp
+    QML_FILES BusyIndicatorOverlay.qml
+    QML_FILES PreviewPopup.qml
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

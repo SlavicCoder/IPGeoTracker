@@ -7,27 +7,15 @@ Popup {
     id: root
     modal: true
     anchors.centerIn: parent
-    visible: true
+    visible: false
 
     Material.theme: Material.Dark
     Material.accent: Material.Purple
 
     property var geoData: ({})
 
-    function setDataFromJson(jsonString) {
-        try {
-            var data = JSON.parse(jsonString);
-            geoData.ip = data.ip || "N/A";
-            geoData.latitude = data.latitude || "N/A";
-            geoData.longitude = data.longitude || "N/A";
-            geoData.city = data.city || "N/A";
-            geoData.zip = data.zip || "N/A";
-            geoData.region_name = data.region_name || "N/A";
-            geoData.country_name = data.country_name || "N/A";
-            geoData.continent_name = data.continent_name || "N/A";
-        } catch (e) {
-            console.error("Error parsing JSON:", e);
-        }
+    function setDataSource(dataSource) {
+        geoData = dataSource
     }
 
     ColumnLayout {
@@ -66,7 +54,6 @@ Popup {
             text: "<b>Continent:</b> " + geoData.continent_name
             font.pixelSize: 18
         }
-
 
         Button {
             text: "Close"

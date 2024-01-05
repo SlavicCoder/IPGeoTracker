@@ -7,19 +7,18 @@
 class IPStackAPI : public QObject {
     Q_OBJECT
 public:
-    IPStackAPI(const QString& apiKey, QObject* parent = nullptr);
+    IPStackAPI(QObject* parent = nullptr);
 
-    void processRequest(const QString& ipAddress);
+    void processRequest(const QString& apiKey, const QString& ipAddress);
 
 signals:
-    void responseReceived(const QString& response);
+    void responseReceived(const QJsonObject& responseObject);
 
 private slots:
     void onRequestFinished(QNetworkReply* reply);
 
 private:
     QNetworkAccessManager m_manager;
-    QString m_apiKey;
 };
 
 #endif // IPSTACKAPI_H

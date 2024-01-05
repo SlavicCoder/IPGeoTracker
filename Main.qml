@@ -4,31 +4,6 @@ import QtQuick.Controls.Material
 import QtQuick.Layouts
 
 ApplicationWindow {
-    property var jsonData: {
-        "ip": "185.54.101.72",
-        "type": "ipv4",
-        "continent_code": "EU",
-        "continent_name": "Europe",
-        "country_code": "PL",
-        "country_name": "Poland",
-        "region_code": "MZ",
-        "region_name": "Mazovia",
-        "city": "Warsaw",
-        "zip": "00-025",
-        "latitude": 52.2317008972168,
-        "longitude": 21.018339157104492,
-        "location": {
-            "geoname_id": 756135,
-            "capital": "Warsaw",
-            "languages": [{"code": "pl", "name": "Polish", "native": "Polski"}],
-            "country_flag": "https://assets.ipstack.com/flags/pl.svg",
-            "country_flag_emoji": "\ud83c\uddf5\ud83c\uddf1",
-            "country_flag_emoji_unicode": "U+1F1F5 U+1F1F1",
-            "calling_code": "48",
-            "is_eu": true
-        }
-    };
-
     id: root
     visible: true
     title: "Geolocation Data App"
@@ -41,6 +16,50 @@ ApplicationWindow {
 
     Component.onCompleted: {
         root.showMaximized()
+    }
+
+    Connections {
+         target: geoDataManager
+         function onActionFinished (response) {
+             busyOverlay.visible = false
+             outputArea.text = JSON.stringify(response, null, 2)
+         }
+
+         function onAdded (success) {
+             if(success)
+             {
+                 showSuccess("Geolocation data added to database")
+             }
+             else
+             {
+                showFailure("Failed to add geolocation data to database. See Output for details.")
+             }
+         }
+
+         function onDeleted (success) {
+             if(success)
+             {
+                 showSuccess("Geolocation data deleted from database")
+             }
+             else
+             {
+                 showFailure("Failed to delete geolocation data from database. See Output for details.")
+             }
+         }
+
+         function onPreviewed (response) {
+             if(response.ip === undefined)
+             {
+                 showFailure("Failed to retrieve geolocation data from database. See Output for details.")
+             }
+             else
+             {
+                 showSuccess("Geolocation data retrieved from database")
+
+                 geoDataPopup.setDataSource(response)
+                 geoDataPopup.open()
+             }
+         }
     }
 
     function showSuccess(message) {
@@ -67,9 +86,17 @@ ApplicationWindow {
     function validateInput() {
         if (inputField.text.trim() === "") {
             showError("IP address/URL cannot be empty!")
+            return false;
         } else {
             hideError()
+            return true;
         }
+    }
+
+    BusyIndicatorOverlay {
+        id: busyOverlay
+        anchors.fill: parent
+        z: 9999
     }
 
     PreviewPopup {
@@ -162,11 +189,13 @@ ApplicationWindow {
                     text: "Add/Update"
                     Layout.fillWidth: true
                     onClicked: {
-                        validateInput()
-                        // Handle the "Add" action
-                        errorText.visible = false // Hide the error message if input is not empty
-                        // Here, you can display the sample JSON data in a TextArea or Text element
-                        outputArea.text = JSON.stringify(jsonData, null, 2) // JSON.stringify with formatting
+                        if(!validateInput())
+                        {
+                            return
+                        }
+                        busyOverlay.visible = true
+                        errorText.visible = false
+                        geoDataManager.addEntry(inputField.text)
                     }
                 }
 
@@ -174,8 +203,13 @@ ApplicationWindow {
                     text: "Delete"
                     Layout.fillWidth: true
                     onClicked: {
-                        validateInput()
-                        showSuccess("Delete action successful!")
+                        if(!validateInput())
+                        {
+                            return
+                        }
+                        busyOverlay.visible = true
+                        errorText.visible = false
+                        geoDataManager.deleteEntry(inputField.text)
                     }
                 }
 
@@ -183,8 +217,13 @@ ApplicationWindow {
                     text: "Retrieve"
                     Layout.fillWidth: true
                     onClicked: {
-                        validateInput()
-                        showFailure("Retrieval action failed!")
+                        if(!validateInput())
+                        {
+                            return
+                        }
+                        busyOverlay.visible = true
+                        errorText.visible = false
+                        geoDataManager.previewEntry(inputField.text)
                     }
                 }
             }
