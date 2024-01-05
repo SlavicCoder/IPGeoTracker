@@ -1,27 +1,25 @@
-cmake_minimum_required(VERSION 3.16)
-
-project(IPGeoTracker VERSION 0.1 LANGUAGES CXX)
-
+# CMakeLists.txt for unit tests
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt6 6.4 REQUIRED COMPONENTS Quick Sql Network)
 
 qt_standard_project_setup()
 
-qt_add_executable(appIPGeoTracker
+add_executable(unit_tests WIN32
+    test_dbmanager.cpp
+    test_geolocationdatamanager.cpp
     main.cpp
+    minitestframework.h
 )
 
-qt_add_qml_module(appIPGeoTracker
-    URI IPGeoTracker
-    VERSION 1.0
-    QML_FILES Main.qml
-    QML_FILES
-    SOURCES dbmanager.h dbmanager.cpp
-    SOURCES ipstackapi.h ipstackapi.cpp
-    SOURCES geolocationdatamanager.h geolocationdatamanager.cpp
-    QML_FILES BusyIndicatorOverlay.qml
-    QML_FILES PreviewPopup.qml
+# Link your project's source files
+target_sources(unit_tests PRIVATE
+    ${CMAKE_SOURCE_DIR}/dbmanager.h
+    ${CMAKE_SOURCE_DIR}/dbmanager.cpp
+    ${CMAKE_SOURCE_DIR}/ipstackapi.h
+    ${CMAKE_SOURCE_DIR}/ipstackapi.cpp
+    ${CMAKE_SOURCE_DIR}/geolocationdatamanager.h
+    ${CMAKE_SOURCE_DIR}/geolocationdatamanager.cpp
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
@@ -35,17 +33,16 @@ set_target_properties(appIPGeoTracker PROPERTIES
     WIN32_EXECUTABLE TRUE
 )
 
-target_link_libraries(appIPGeoTracker
+target_link_libraries(unit_tests
     PRIVATE Qt6::Quick
     PRIVATE Qt6::Sql
     PRIVATE Qt6::Network
 )
 
 include(GNUInstallDirs)
-install(TARGETS appIPGeoTracker
-    BUNDLE DESTINATION .
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-)
 
-add_subdirectory(tests/)
+# Include any necessary header directories
+target_include_directories(unit_tests PRIVATE ${CMAKE_SOURCE_DIR})
+
+# Add a test target that runs your unit tests
+add_test(NAME unit_tests COMMAND unit_tests)
