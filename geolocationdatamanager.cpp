@@ -84,6 +84,7 @@ void GeolocationDataManager::apiRequestFinished(const QJsonObject& responseObjec
 
 QString GeolocationDataManager::sanitizeInput(const QString &input) const
 {
+    //Now, I only prevent SQL Injection, but more input sanitizing can be done to handle edge cases
     QString sanitizedInput = input;
     sanitizedInput.replace("'", "''");
     return sanitizedInput;
