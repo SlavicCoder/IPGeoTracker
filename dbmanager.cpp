@@ -4,29 +4,10 @@
 
 DBManager::DBManager()
 {
-
-
     m_db = QSqlDatabase::addDatabase("QSQLITE");
     m_db.setDatabaseName("IPGeoTracker.db");
-
     m_query = QSqlQuery(m_db);
-
-    if (!m_db.open())
-    {
-        qDebug() << "Database: connection with database failed";
-    }
-    else
-    {
-        qDebug() << "Database: connection ok";
-        if (setUpTable())
-        {
-            qDebug() << "GeoData table created successfully!";
-        }
-        else
-        {
-            qDebug() << "Error creating GeoData table:" << getLastError();
-        }
-    }
+    initializeDatabase();
 }
 
 DBManager::~DBManager()
@@ -45,12 +26,19 @@ bool DBManager::connectionSuccessful() const
 bool DBManager::executeQuery(const QString &query)
 {
     qDebug() << query;
-    const auto success = m_query.exec(query);
-    return success;
+    if(!connectionSuccessful())
+    {
+        initializeDatabase();
+    }
+    return m_query.exec(query);
 }
 
 QString DBManager::getLastError() const
 {
+    if(!connectionSuccessful())
+    {
+        return QString { "Database: connection with database failed" };
+    }
     return m_query.lastError().text();
 }
 
@@ -62,6 +50,26 @@ const QSqlQuery &DBManager::getLastQuery() const
 void DBManager::moveQueryToNextRow()
 {
     m_query.next();
+}
+
+void DBManager::initializeDatabase()
+{
+    if (!m_db.open())
+    {
+        qDebug() << "Database: connection with database failed";
+    }
+    else
+    {
+        qDebug() << "Database: connection ok";
+        if (setUpTable())
+        {
+            qDebug() << "GeoData table created successfully!";
+        }
+        else
+        {
+            qDebug() << "Error creating GeoData table:" << getLastError();
+        }
+    }
 }
 
 bool DBManager::setUpTable()

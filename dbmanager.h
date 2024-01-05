@@ -26,6 +26,7 @@ private:
     QSqlDatabase m_db;
     QSqlQuery m_query;
 
+    void initializeDatabase();
     [[nodiscard]] bool setUpTable();
 };
 

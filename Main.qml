@@ -19,47 +19,38 @@ ApplicationWindow {
     }
 
     Connections {
-         target: geoDataManager
-         function onActionFinished (response) {
-             busyOverlay.visible = false
-             outputArea.text = JSON.stringify(response, null, 2)
-         }
+        target: geoDataManager
+        function onActionFinished(response) {
+            busyOverlay.visible = false
+            outputArea.text = JSON.stringify(response, null, 2)
+        }
 
-         function onAdded (success) {
-             if(success)
-             {
-                 showSuccess("Geolocation data added to database")
-             }
-             else
-             {
+        function onAdded(success) {
+            if (success) {
+                showSuccess("Geolocation data added to database")
+            } else {
                 showFailure("Failed to add geolocation data to database. See Output for details.")
-             }
-         }
+            }
+        }
 
-         function onDeleted (success) {
-             if(success)
-             {
-                 showSuccess("Geolocation data deleted from database")
-             }
-             else
-             {
-                 showFailure("Failed to delete geolocation data from database. See Output for details.")
-             }
-         }
+        function onDeleted(success) {
+            if (success) {
+                showSuccess("Geolocation data deleted from database")
+            } else {
+                showFailure("Failed to delete geolocation data from database. See Output for details.")
+            }
+        }
 
-         function onPreviewed (response) {
-             if(response.ip === undefined)
-             {
-                 showFailure("Failed to retrieve geolocation data from database. See Output for details.")
-             }
-             else
-             {
-                 showSuccess("Geolocation data retrieved from database")
+        function onPreviewed(response) {
+            if (response.ip === undefined) {
+                showFailure("Failed to retrieve geolocation data from database. See Output for details.")
+            } else {
+                showSuccess("Geolocation data retrieved from database")
 
-                 geoDataPopup.setDataSource(response)
-                 geoDataPopup.open()
-             }
-         }
+                geoDataPopup.setDataSource(response)
+                geoDataPopup.open()
+            }
+        }
     }
 
     function showSuccess(message) {
@@ -86,10 +77,10 @@ ApplicationWindow {
     function validateInput() {
         if (inputField.text.trim() === "") {
             showError("IP address/URL cannot be empty!")
-            return false;
+            return false
         } else {
             hideError()
-            return true;
+            return true
         }
     }
 
@@ -189,8 +180,7 @@ ApplicationWindow {
                     text: "Add/Update"
                     Layout.fillWidth: true
                     onClicked: {
-                        if(!validateInput())
-                        {
+                        if (!validateInput()) {
                             return
                         }
                         busyOverlay.visible = true
@@ -203,8 +193,7 @@ ApplicationWindow {
                     text: "Delete"
                     Layout.fillWidth: true
                     onClicked: {
-                        if(!validateInput())
-                        {
+                        if (!validateInput()) {
                             return
                         }
                         busyOverlay.visible = true
@@ -217,8 +206,7 @@ ApplicationWindow {
                     text: "Retrieve"
                     Layout.fillWidth: true
                     onClicked: {
-                        if(!validateInput())
-                        {
+                        if (!validateInput()) {
                             return
                         }
                         busyOverlay.visible = true

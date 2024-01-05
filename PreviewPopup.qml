@@ -59,7 +59,7 @@ Popup {
             text: "Close"
             Layout.alignment: Qt.AlignHCenter
             onClicked: {
-                root.close();
+                root.close()
             }
         }
     }

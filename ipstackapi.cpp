@@ -11,9 +11,7 @@ IPStackAPI::IPStackAPI( QObject* parent) : QObject(parent) {
 }
 
 void IPStackAPI::processRequest(const QString& apiKey, const QString& ipAddress) {
-    QString apiUrl = "http://api.ipstack.com/" + ipAddress + "?access_key=" + apiKey;
-
-    QUrl url(apiUrl);
+    QUrl url(QString("http://api.ipstack.com/" + ipAddress + "?access_key=" + apiKey));
     QNetworkRequest request(url);
 
     QSharedPointer<QNetworkReply> reply(m_manager.get(request));
@@ -25,7 +23,6 @@ void IPStackAPI::processRequest(const QString& apiKey, const QString& ipAddress)
     if (reply->error() == QNetworkReply::NoError) {
         QByteArray responseData = reply->readAll();
 
-        // Parse the JSON data directly into a QJsonObject
         QJsonParseError jsonError;
         QJsonDocument jsonDoc = QJsonDocument::fromJson(responseData, &jsonError);
 

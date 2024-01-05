@@ -20,10 +20,10 @@ private slots:
     void apiRequestFinished(const QJsonObject& responseObject);
 
 signals:
-    void actionFinished(const QJsonObject& responseObject);
     void added(const bool& success);
     void deleted(const bool& success);
     void previewed(const QJsonObject& responseObject);
+    void actionFinished(const QJsonObject& responseObject);
 
 private:
     IPStackAPI m_api;

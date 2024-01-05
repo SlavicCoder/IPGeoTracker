@@ -36,6 +36,9 @@ void GeolocationDataManager::previewEntry(const QString &key)
     const auto success = m_dbman.executeQuery(query);
 
     QJsonObject returnObject;
+    returnObject["query"] = query;
+    returnObject["lastQueryError"] = m_dbman.getLastError();
+
     if(success)
     {
         const auto& result = m_dbman.getLastQuery();
@@ -53,9 +56,6 @@ void GeolocationDataManager::previewEntry(const QString &key)
             }
         }
     }
-
-    returnObject["query"] = query;
-    returnObject["lastQueryError"] = m_dbman.getLastError();
     emit previewed(returnObject);
     emit actionFinished(returnObject);
 }
