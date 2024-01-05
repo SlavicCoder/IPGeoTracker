@@ -20,3 +20,16 @@ Once the application is up and running, you can interact with it to perform the 
 - Add Geolocation Data: Enter an IP address or URL to retrieve and store geolocation data in the database.
 - Delete Geolocation Data: Remove geolocation data based on a specific IP address or URL.
 - Query Geolocation Data: Retrieve geolocation data by entering an IP address or URL.
+
+<b>Screenshots:</b>
+![Alt text](screenshots/image-1.png)
+
+![Alt text](screenshots/image-2.png)
+
+![Alt text](screenshots/image-3.png)
+
+![Alt text](screenshots/image-4.png)
+
+![Alt text](screenshots/image-5.png)
+
+![Alt text](screenshots/image-6.png)
